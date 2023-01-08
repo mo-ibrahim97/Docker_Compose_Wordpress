@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+#database image for app 
+  mydata_base:
+    image: mysql
+    restart: always
+    environment:    
+      MYSQL_ROOT_PASSWORD : 1234
+      MYSQL_DATABASE : data01
+      MYSQL_USER : user1
+      MYSQL_PASSWORD : 1234
+    volumes:
+      - mysql:/var/lib/mysql
+#app image        
+  wordpress:
+    depends_on:
+      - mydata_base
+    image: wordpress
+    restart: always
+    ports:
+      - "8044:80"
+    environment:
+      WORDPRESS_DB_HOST: mydata_base:3306
+      WORDPRESS_DB_USER: user1
+      WORDPRESS_DB_PASSWORD: 1234
+      WORDPRESS_DB_NAME: data01
+    volumes:
+      ["./:/var/www/html"]
+#admin image for database  
+  phpmyadmin:
+    depends_on: 
+    - mydata_base
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8020:80"
+    environment:
+      PMA_HOST : mydata_base
+      MYSQL_ROOT_PASSWORD : 1234
+      MYSQL_USER : user1
+      MYSQL_PASSWORD : 1234
+#high level volume for images
+volumes:
+  mysql: {}
+
+
+
+
+
+
+
+
+
+
